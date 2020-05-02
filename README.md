@@ -1,7 +1,7 @@
 # tensorflow-yolov4
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
-*This is a fork from https://github.com/hunglc007/tensorflow-yolov4-tflite, to add support to convert YOLO v4 .weights to tf's .pb or tf.keras's .h5 format.*
+*NOTICE: This is a fork from https://github.com/hunglc007/tensorflow-yolov4-tflite, to add support to convert YOLO v4 .weights to tf's .pb or tf.keras's .h5 format.*
 
 YOLOv4 Implemented in Tensorflow 2.0. 
 Convert YOLO v4 .weights to .pb and .tflite format for tensorflow and tensorflow lite.
