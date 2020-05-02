@@ -1,11 +1,12 @@
-# tensorflow-yolov4-tflite
+# tensorflow-yolov4
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
+
+*This is a fork from https://github.com/hunglc007/tensorflow-yolov4-tflite, to add support to convert YOLO v4 .weights to tf's .pb or tf.keras's .h5 format.*
 
 YOLOv4 Implemented in Tensorflow 2.0. 
 Convert YOLO v4 .weights to .pb and .tflite format for tensorflow and tensorflow lite.
 
 Download yolov4.weights file: https://drive.google.com/open?id=1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT
-
 
 ### Prerequisites
 * Tensorflow 2.1.0
@@ -32,7 +33,21 @@ python detect.py --weights ./data/yolov4-int8.tflite --framework tflite --size 4
 ##### Yolov4 tflite int8
 <p align="center"><img src="result-int8.png" width="640"\></p>
 
-### Convert to tflite
+### Convert to .h5
+
+```bash
+# yolov4
+python convert.py --weights ./data/yolov4.weights --output ./data/yolov4.h5
+```
+
+### Convert to .pb
+
+```bash
+# yolov4
+python convert.py --weights ./data/yolov4.weights --output ./data/yolov4-pb
+```
+
+### Convert to .tflite
 
 ```bash
 # yolov4
