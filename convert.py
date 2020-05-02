@@ -9,7 +9,7 @@ import os
 from core.config import cfg
 
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
-flags.DEFINE_string('output', './data/yolov4.tflite', 'path to output')
+flags.DEFINE_string('output', './data/yolov4-pb', 'path to output')
 flags.DEFINE_boolean('tiny', False, 'path to output')
 flags.DEFINE_integer('input_size', 416, 'path to output')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
@@ -67,7 +67,7 @@ def save_tf():
 
 def demo():
   model = tf.keras.models.load_model(FLAGS.output)
-  logging.info('keras model loaded')
+  logging.info('tf model loaded')
 
   input_shape = model.inputs[0].shape[1:]
   input_data = np.array([np.random.random_sample(input_shape)], dtype=np.float32)
