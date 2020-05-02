@@ -66,7 +66,7 @@ def save_tf():
   logging.info("model saved to: {}".format(FLAGS.output))
 
 def demo():
-  model = tf.keras.models.load_model(FLAGS.output)
+  model = tf.keras.models.load_model(FLAGS.output, compile=False)
   logging.info('tf model loaded')
 
   input_shape = model.inputs[0].shape[1:]
