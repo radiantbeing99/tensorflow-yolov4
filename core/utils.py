@@ -162,6 +162,29 @@ def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_la
                         fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
     return image
 
+
+def describe_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES)):
+    num_classes = len(classes)
+    image_h, image_w, _ = image.shape
+
+    bbox_messes = []
+
+    out_boxes, out_scores, out_classes, num_boxes = bboxes
+    for i in range(num_boxes[0]):
+        if int(out_classes[0][i]) < 0 or int(out_classes[0][i]) > num_classes: continue
+        coor = out_boxes[0][i]
+        coor[0] = int(coor[0] * image_h)
+        coor[2] = int(coor[2] * image_h)
+        coor[1] = int(coor[1] * image_w)
+        coor[3] = int(coor[3] * image_w)
+
+        score = out_scores[0][i]
+        class_ind = int(out_classes[0][i])
+        c1, c2 = (coor[1], coor[0]), (coor[3], coor[2])
+
+        bbox_messes.append('%s: %.2f, Position [%s, %s])' % (classes[class_ind], score, c1 ,c2))
+    return bbox_messes
+
 def bbox_iou(bboxes1, bboxes2):
     """
     @param bboxes1: (a, b, ..., 4)

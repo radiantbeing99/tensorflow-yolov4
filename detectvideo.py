@@ -25,7 +25,8 @@ flags.DEFINE_float('iou', 0.45, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
 flags.DEFINE_string('output', None, 'path to output video')
 flags.DEFINE_string('output_format', 'XVID', 'codec used in VideoWriter when saving video to file')
-flags.DEFINE_boolean('dis_cv2_window', False, 'disable cv2 window during the process') # this is good for the .ipynb
+flags.DEFINE_boolean('dis_cv2_window', True, 'disable cv2 window during the process') # this is good for the .ipynb
+
 
 def main(_argv):
     config = ConfigProto()
@@ -102,23 +103,30 @@ def main(_argv):
             score_threshold=FLAGS.score
         )
         pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
-        image = utils.draw_bbox(frame, pred_bbox)
         curr_time = time.time()
         exec_time = curr_time - prev_time
-        result = np.asarray(image)
+        if not FLAGS.dis_cv2_window:
+            image = utils.draw_bbox(frame, pred_bbox)
+            result = np.asarray(image)
+            result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        else:
+            bbox_messes = utils.describe_bbox(frame, pred_bbox)
         info = "time: %.2f ms" %(1000*exec_time)
         print(info)
 
-        result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         if not FLAGS.dis_cv2_window:
             cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
             cv2.imshow("result", result)
             if cv2.waitKey(1) & 0xFF == ord('q'): break
+        else:
+            for mess in bbox_messes:
+                print(mess)
 
         if FLAGS.output:
             out.write(result)
 
         frame_id += 1
+
 
 if __name__ == '__main__':
     try:
