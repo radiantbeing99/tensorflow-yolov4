@@ -104,22 +104,20 @@ def main(_argv):
             score_threshold=FLAGS.score
         )
         pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
+        image = utils.draw_bbox(frame, pred_bbox)
         curr_time = time.time()
         exec_time = curr_time - prev_time
-        if not FLAGS.dis_cv2_window:
-            image = utils.draw_bbox(frame, pred_bbox)
-            result = np.asarray(image)
-            result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        else:
-            bbox_messes = utils.describe_bbox(frame, pred_bbox)
-        info = "time: %.2f ms" %(1000*exec_time)
+        result = np.asarray(image)
+        info = "time: %.2f ms" % (1000 * exec_time)
         print(info)
 
+        result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         if not FLAGS.dis_cv2_window:
             cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
             cv2.imshow("result", result)
             if cv2.waitKey(1) & 0xFF == ord('q'): break
         else:
+            bbox_messes = utils.describe_bbox(frame, pred_bbox)
             for mess in bbox_messes:
                 print(mess)
 
