@@ -109,7 +109,7 @@ def main(_argv):
         exec_time = curr_time - prev_time
         result = np.asarray(image)
         info = "time: %.2f ms" % (1000 * exec_time)
-        print(info)
+        logging.info(info)
 
         result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         if not FLAGS.dis_cv2_window:
@@ -119,7 +119,7 @@ def main(_argv):
         else:
             bbox_messes = utils.describe_bbox(frame, pred_bbox)
             for mess in bbox_messes:
-                print(mess)
+                logging.info(mess)
 
         if FLAGS.output:
             out.write(result)
