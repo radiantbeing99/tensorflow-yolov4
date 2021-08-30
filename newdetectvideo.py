@@ -32,8 +32,7 @@ flags.DEFINE_boolean('dis_cv2_window', True, 'disable cv2 window during the proc
 
 
 # @tf.function
-def infer(batch_data, model):
-    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
+def infer(batch_data, model, STRIDES, ANCHORS, NUM_CLASS, XYSCALE):
     # batch_data = tf.constant(image_data)
     feature_maps = model(batch_data)
     bbox_tensors = []
@@ -89,9 +88,10 @@ def main(_argv):
     # config = ConfigProto()
     # config.gpu_options.allow_growth = True
     # session = InteractiveSession(config=config)
-    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
     input_size = FLAGS.size
     video_path = FLAGS.video
+
+    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
 
     print("Video from: ", video_path)
     vid = cv2.VideoCapture(video_path)
@@ -106,7 +106,7 @@ def main(_argv):
     else:
         # saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
         # infer = saved_model_loaded.signatures[tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY]
-        STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
+        # STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
         inputs = tf.keras.layers.Input([FLAGS.size, FLAGS.size, 3])
         outputs = YOLO(inputs, NUM_CLASS, FLAGS.model, FLAGS.tiny)
         model = tf.keras.Model(inputs, outputs)
@@ -150,7 +150,7 @@ def main(_argv):
                                                 input_shape=tf.constant([input_size, input_size]))
         else:
             batch_data = tf.constant(image_data)
-            boxes, scores, classes, valid_detections = infer(batch_data, model)
+            boxes, scores, classes, valid_detections = infer(batch_data, model, STRIDES, ANCHORS, NUM_CLASS, XYSCALE)
         pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
         image = utils.draw_bbox(frame, pred_bbox)
         curr_time = time.time()

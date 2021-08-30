@@ -30,9 +30,9 @@ flags.DEFINE_boolean('dis_cv2_window', True, 'disable cv2 window during the proc
 
 
 def main(_argv):
-    config = ConfigProto()
-    config.gpu_options.allow_growth = True
-    session = InteractiveSession(config=config)
+    # config = ConfigProto()
+    # config.gpu_options.allow_growth = True
+    # session = InteractiveSession(config=config)
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
     input_size = FLAGS.size
     video_path = FLAGS.video
@@ -48,8 +48,9 @@ def main(_argv):
         print(input_details)
         print(output_details)
     else:
-        saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
-        infer = saved_model_loaded.signatures['serving_default']
+        # saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_c   onstants.SERVING])
+        # infer = saved_model_loaded.signatures['serving_default']
+        saved_model_loaded = tf.keras.models.load_model(FLAGS.weights, compile=False)
     
     if FLAGS.output:
         # by default VideoCapture returns float instead of int
@@ -88,11 +89,15 @@ def main(_argv):
                 boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25,
                                                 input_shape=tf.constant([input_size, input_size]))
         else:
-            batch_data = tf.constant(image_data)
-            pred_bbox = infer(batch_data)
-            for key, value in pred_bbox.items():
-                boxes = value[:, :, 0:4]
-                pred_conf = value[:, :, 4:]
+            # batch_data = tf.constant(image_data)
+            # pred_bbox = infer(batch_data)
+            pred_bbox = saved_model_loaded.predict(image_data)
+            # print(pred_bbox.keys())
+            # for key, value in pred_bbox.items():
+            #     boxes = value[:, :, 0:4]
+            #     pred_conf = value[:, :, 4:]
+            boxes = pred_bbox[:, :, 0:4]
+            pred_conf = pred_bbox[:, :, 4:]
 
         boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
             boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
